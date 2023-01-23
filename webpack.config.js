@@ -16,11 +16,14 @@ module.exports = {
             {
                 test: /\.s[ac]ss$/i,
                 use: [
+                    "style-loader",
+                    "css-loader",
                     {
                         // Compiles Sass to CSS
                         loader: "sass-loader",
                         options: {
-                            sourceMap: true
+                            sourceMap: true,
+                            implementation: require("sass")
                         }
                     }
                 ],
