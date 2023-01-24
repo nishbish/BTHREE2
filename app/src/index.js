@@ -1,5 +1,9 @@
 import "./sass/style.scss";
 import * as THREE from 'three';
+
+import { AssetManager } from './AssetManager.js';
+import { Player } from './Player.js';
+
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 // import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
@@ -10,7 +14,10 @@ class BBB {
         this.scene = new THREE.Scene();
         this.init();
 
-        this.makeCube();
+        this.player = new Player();
+        this.scene.add(this.player.mesh);
+
+        // this.makeCube();
     }
 
     init() {
