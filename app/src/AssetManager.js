@@ -1,17 +1,11 @@
-import {
-    MeshStandardMaterial,
-    BoxGeometry,
-    Mesh
-} from "three";
-
 class AssetManager {
     static assets = {
-        materials: {},
+        material: {},
         geometry: {}
     }
 
     static createAsset(name, type, classRef, args) {
-        if (!(type in AssetManager.assets)) { return false; }
+        if (!(type in AssetManager.assets)) { console.error('could not find type "' + type +'".'); return false; }
         if (name in AssetManager.assets[type]) { return AssetManager.assets[type][name]; }
 
         AssetManager.assets[type][name] = new classRef(...args);

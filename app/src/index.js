@@ -13,17 +13,22 @@ class BBB {
     constructor() {
         this.scene = new THREE.Scene();
         this.init();
-
-        this.player = new Player();
-        this.scene.add(this.player.mesh);
-
-        // this.makeCube();
+        
+        for (let i=0;i<10;i++) {
+            this.addPlayer(new THREE.Vector3(i + i, 0, 0));
+        }
     }
 
     init() {
+        this.initLighting();
         this.initCamera();
         this.initRenderer();
         this.initControls();
+    }
+
+    initLighting() {
+        this.initLighting.ambientLight = new THREE.AmbientLight();
+        this.scene.add(this.initLighting.ambientLight);
     }
 
     initCamera() {
@@ -65,11 +70,10 @@ class BBB {
         this.renderer.setSize( window.innerWidth, window.innerHeight );
     }
 
-    makeCube() {
-        const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-        const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-        this.cube = new THREE.Mesh( geometry, material );
-        this.scene.add( this.cube );
+    addPlayer(position = new THREE.Vector3) {
+        this.player = new Player();
+        this.player.mesh.position.copy(position);
+        this.scene.add(this.player.mesh);
     }
 }
 
