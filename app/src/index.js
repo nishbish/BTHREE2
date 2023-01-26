@@ -1,11 +1,10 @@
 import "./sass/style.scss";
 import * as THREE from 'three';
 
-import { AssetManager } from './AssetManager.js';
-import { Player } from './Player.js';
+import { KeyboardControls } from './jsm/KeyboardControls.js';
+import { Player } from './jsm/Player.js';
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-// import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPixelatedPass } from 'three/addons/postprocessing/RenderPixelatedPass.js';
 
@@ -13,17 +12,21 @@ class BBB {
     constructor() {
         this.scene = new THREE.Scene();
         this.init();
-        
-        for (let i=0;i<10;i++) {
-            this.addPlayer(new THREE.Vector3(i + i, 0, 0));
-        }
+       
+        this.gridSize = 20;
+        this.grid = new THREE.GridHelper(this.gridSize, this.gridSize);
+        this.scene.add(this.grid);
+
+        this.bots = [];
     }
 
     init() {
         this.initLighting();
         this.initCamera();
         this.initRenderer();
-        this.initControls();
+        this.initOrbitControls();
+        this.initUI();
+        this.initKeyboardControls();
     }
 
     initLighting() {
@@ -53,14 +56,38 @@ class BBB {
         this.animate();
     }
 
-    initControls() {
+    initOrbitControls() {
         this.orbitControlscontrols = new OrbitControls(this.camera, this.renderer.domElement);
+    }
+
+    initUI() {
+        this.ui = {
+            addBotButton: document.querySelector('#add-bot-button')
+        }
+
+        this.ui.addBotButton.addEventListener('click', () => { this.addBot(new THREE.Vector3(0.5, 0.5, 0.5)); });
+    }
+
+    initKeyboardControls() {
+        this.keyboardControls = new KeyboardControls();
+        this.keyboardControls.addEventListener('keyUp', (e) => {
+            let dir = new THREE.Vector3;
+
+            switch (e.name) {
+                case 'ArrowUp':    dir.z = -1;  break;
+                case 'ArrowRight': dir.x = 1;  break;
+                case 'ArrowDown':  dir.z = 1; break;
+                case 'ArrowLeft':  dir.x = -1; break;
+            }
+
+            for (const bot of this.bots) {
+                bot.mesh.position.add(dir);
+            }
+        });
     }
 
     animate() {
         requestAnimationFrame(() => { this.animate(); });
-        
-        //this.renderer.render( this.scene, this.camera );
         this.effects.composer.render();
     }
 
@@ -70,10 +97,11 @@ class BBB {
         this.renderer.setSize( window.innerWidth, window.innerHeight );
     }
 
-    addPlayer(position = new THREE.Vector3) {
-        this.player = new Player();
-        this.player.mesh.position.copy(position);
-        this.scene.add(this.player.mesh);
+    addBot(position = new THREE.Vector3) {
+        const bot = new Player();
+        bot.mesh.position.copy(position);
+        this.bots.push(bot);
+        this.scene.add(bot.mesh);
     }
 }
 
