@@ -81,7 +81,8 @@ class BBB {
             }
 
             for (const bot of this.bots) {
-                bot.mesh.position.add(dir);
+                const movePos = bot.mesh.position.clone().add(dir);
+                bot.move(movePos);
             }
         });
     }
