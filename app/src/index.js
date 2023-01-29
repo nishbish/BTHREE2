@@ -1,6 +1,7 @@
 import "./sass/style.scss";
 import * as THREE from 'three';
 
+import { GUI } from './jsm/GUI.js';
 import { KeyboardControls } from './jsm/KeyboardControls.js';
 import { Player } from './jsm/Player.js';
 
@@ -13,8 +14,9 @@ class BBB {
         this.scene = new THREE.Scene();
         this.init();
        
-        this.gridSize = 20;
+        this.gridSize = 50;
         this.grid = new THREE.GridHelper(this.gridSize, this.gridSize);
+        this.grid.position.set(0.5, 0, 0.5);
         this.scene.add(this.grid);
 
         this.bots = [];
@@ -61,11 +63,7 @@ class BBB {
     }
 
     initUI() {
-        this.ui = {
-            addBotButton: document.querySelector('#add-bot-button')
-        }
-
-        this.ui.addBotButton.addEventListener('click', () => { this.addBot(new THREE.Vector3(0.5, 0.5, 0.5)); });
+        GUI.get('#addBotButton').addEventListener('click', () => { this.addBot(); });
     }
 
     initKeyboardControls() {
@@ -81,8 +79,7 @@ class BBB {
             }
 
             for (const bot of this.bots) {
-                const movePos = bot.mesh.position.clone().add(dir);
-                bot.move(movePos);
+                bot.move(dir);
             }
         });
     }
@@ -99,10 +96,14 @@ class BBB {
     }
 
     addBot(position = new THREE.Vector3) {
-        const bot = new Player();
-        bot.mesh.position.copy(position);
+        const bot = new Player(this.renderer.domElement, this.camera);
+        bot.addEventListener('pointerUp', (e) => {
+        
+        });
+
+        bot.object.position.copy(position);
         this.bots.push(bot);
-        this.scene.add(bot.mesh);
+        this.scene.add(bot.object);
     }
 }
 
