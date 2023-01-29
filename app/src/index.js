@@ -70,7 +70,7 @@ class BBB {
 
     initKeyboardControls() {
         this.keyboardControls = new KeyboardControls();
-        this.keyboardControls.addEventListener('keyUp', (e) => {
+        this.keyboardControls.addEventListener('keyDown', (e) => {
             let dir = new THREE.Vector3;
 
             switch (e.name) {
