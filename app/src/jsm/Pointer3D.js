@@ -5,61 +5,41 @@ import {
 } from "three";
 
 class Pointer3D extends EventDispatcher {
-    constructor(canvas, camera, target) {
+    constructor(bbb, target) {
         super();
 
-        this.canvas = canvas;
-        this.camera = camera;
+        this.canvas = bbb.renderer.domElement;
+        this.camera = bbb.camera;
+        this.scene = bbb.scene;
         this.target = target;
         this.raycaster = new Raycaster();
 
-        canvas.addEventListener('pointerdown', (e) => { this.pointerDown(e) });
-        canvas.addEventListener('pointerup', (e) => { this.pointerUp(e) });
+        this.canvas.addEventListener('pointerdown', (e) => { this.pointer(e, 'pointerdown') });
+        this.canvas.addEventListener('pointerup', (e) => { this.pointer(e, 'pointerup') });
     }
 
-    pointerDown(e) {
-        //if (this.target !== object) { return; }
-        // const clickPos = this.parsePointer(e);
-        const clickPos = new Vector2(e.clientX, e.clientY);
+    pointer(e, type) {
+        const rect = this.canvas.getBoundingClientRect();
 
-        const indicator = document.querySelector('#indicator');
-        indicator.style.left = e.clientX + 'px';
-        indicator.style.top = e.clientY + 'px';
+        const clickPos = new Vector2(
+            ((e.clientX - rect.x) / rect.width) * 2 - 1,
+            -((e.clientY - rect.y) / rect.height) * 2 + 1
+        );
 
         this.raycaster.setFromCamera(clickPos, this.camera);
-
-        console.log('this.target', this.target);
-        const intersects = this.raycaster.intersectObjects([this.target], false);			
-		console.log('intersects', intersects);
+        const intersects = this.raycaster.intersectObject(this.target, false);
 
 		for (let intersect of intersects) {
 			if (this.target === intersect.object) {
+                this.dispatchEvent({
+                    type: type,
+                    event: e,
+                    intersect: intersect
+                });
+
                 break;
             }
 		}
-
-        this.dispatchEvent({
-			type: 'pointerDown',
-			event: e
-		});
-    }
-
-    pointerUp(e) {
-        //if (this.target !== object) { return; }
-
-        this.dispatchEvent({
-			type: 'pointerUp',
-			event: e
-		});
-    }
-
-    parsePointer(e) {	
-        var rect = this.canvas.getBoundingClientRect();
-
-        return new Vector2(
-            ((e.clientX - rect.x) / rect.width) * 2 - 1,
-            ((e.clientY - rect.y) / rect.height) * 2 + 1
-        );
     }
 }
 

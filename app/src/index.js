@@ -51,7 +51,7 @@ class BBB {
         //composer effects
         this.effects = {
             composer: new EffectComposer( this.renderer ),
-            renderPixelatedPass: new RenderPixelatedPass( 6, this.scene, this.camera )
+            renderPixelatedPass: new RenderPixelatedPass(4, this.scene, this.camera)
         }
         
         this.effects.composer.addPass(this.effects.renderPixelatedPass);
@@ -96,9 +96,15 @@ class BBB {
     }
 
     addBot(position = new THREE.Vector3) {
-        const bot = new Player(this.renderer.domElement, this.camera);
-        bot.addEventListener('pointerUp', (e) => {
-        
+        const bot = new Player(this);
+        bot.addEventListener('click', (e) => {
+            console.log('bot click', e);
+
+            for (const otherBot of this.bots) {
+                otherBot.marker.visible = false;
+            }
+            
+            bot.marker.visible = true;
         });
 
         bot.object.position.copy(position);

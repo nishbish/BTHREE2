@@ -41,6 +41,7 @@ button {
 }
 
 #indicator {
+    pointer-events: none;
     background-color: red;
     position:absolute;
     z-index:1;

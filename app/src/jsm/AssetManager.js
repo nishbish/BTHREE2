@@ -4,7 +4,7 @@ class AssetManager {
         geometry: {}
     }
 
-    static createAsset(name, type, classRef, args) {
+    static createAsset(name, type, classRef, args = []) {
         if (!(type in AssetManager.assets)) { console.error('could not find type "' + type +'".'); return false; }
         if (name in AssetManager.assets[type]) { return AssetManager.assets[type][name]; }
 

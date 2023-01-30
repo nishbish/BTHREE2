@@ -5,38 +5,59 @@ import {
     Group,
     Mesh,
     Vector3,
+    TetrahedronGeometry,
 } from "three";
 
 import { AssetManager } from './AssetManager.js';
 import { Pointer3D } from './Pointer3D.js';
 
 class Player extends EventDispatcher {
-    constructor(canvas, camera) {
+    constructor(bbb) {
         super();
 
-        this.material = AssetManager.createAsset('botSkin', 'material', MeshStandardMaterial, [{ color: 0x6148A1 }]);
-        this.geometry = AssetManager.createAsset('botGeo', 'geometry', BoxGeometry, [1, 1, 1]);
-        this.object = new Mesh();
-        this.object.mesh = new Mesh(this.geometry, this.material);
-        this.object.mesh.position.y += 0.5;
-        this.object.add(this.object.mesh);
+        this.object = new Group();
+
+        this.geometry = AssetManager.createAsset('boxGeo', 'geometry', BoxGeometry, [1, 1, 1]);
+        this.meshMaterial = AssetManager.createAsset('botSkin', 'material', MeshStandardMaterial, [{ color: 0x6148A1 }]);
+      
+        //mesh
+        this.mesh = new Mesh(this.geometry, this.meshMaterial);
+        this.mesh.position.y += 0.5;
+        this.object.add(this.mesh);
+        
+        //collider
+        this.collider = new Mesh(this.geometry);
+        this.collider.visible = false;
+        this.collider.position.y += 0.5;
+        this.object.add(this.collider);
+
+        //active marker
+        this.markerGeo = AssetManager.createAsset('markerGeo', 'geometry', TetrahedronGeometry);
+        this.marker = new Mesh(this.markerGeo);
+        this.marker.scale.set(0.3, 0.3, 0.3);
+        this.marker.position.set(0, 1.2, 0);
+        this.marker.visible = false;
+        this.object.add(this.marker);
 
         this.moving = false;
+        this.pointerDown = null;
 
-        this.pointer3d = new Pointer3D(canvas, camera, this.object);
+        this.pointer3d = new Pointer3D(bbb, this.collider);
 
-        this.pointer3d.addEventListener('pointerUp', (e) => {
-            this.dispatchEvent({
-                type: 'pointerUp',
-                event: e
-            });
+        this.pointer3d.addEventListener('pointerdown', (e) => {
+            this.pointerDown = e;
         });
+        
+        this.pointer3d.addEventListener('pointerup', (e) => {
+            if (this.pointerDown && e.event.timeStamp - this.pointerDown.event.timeStamp > 200) { return; }
 
-        this.pointer3d.addEventListener('pointerDown', (e) => {
             this.dispatchEvent({
-                type: 'pointerDown',
-                event: e
+                type: 'click',
+                pointerDown: this.pointerDown,
+                pointerUp: e
             });
+
+            this.pointerDown = null;
         });
     }
 
