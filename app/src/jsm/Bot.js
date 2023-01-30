@@ -5,60 +5,44 @@ import {
     Group,
     Mesh,
     Vector3,
-    TetrahedronGeometry,
+    ConeGeometry,
 } from "three";
 
 import { AssetManager } from './AssetManager.js';
-import { Pointer3D } from './Pointer3D.js';
 
-class Player extends EventDispatcher {
-    constructor(bbb) {
+class Bot extends EventDispatcher {
+    constructor() {
         super();
 
         this.object = new Group();
+        this.object.name = 'bot';
 
         this.geometry = AssetManager.createAsset('boxGeo', 'geometry', BoxGeometry, [1, 1, 1]);
         this.meshMaterial = AssetManager.createAsset('botSkin', 'material', MeshStandardMaterial, [{ color: 0x6148A1 }]);
       
         //mesh
         this.mesh = new Mesh(this.geometry, this.meshMaterial);
+        this.mesh.name = 'bot mesh';
         this.mesh.position.y += 0.5;
         this.object.add(this.mesh);
         
         //collider
         this.collider = new Mesh(this.geometry);
+        this.collider.name = 'bot collider';
+        this.collider.bot = this;
         this.collider.visible = false;
         this.collider.position.y += 0.5;
         this.object.add(this.collider);
 
         //active marker
-        this.markerGeo = AssetManager.createAsset('markerGeo', 'geometry', TetrahedronGeometry);
+        this.markerGeo = AssetManager.createAsset('markerGeo', 'geometry', ConeGeometry, [0.2, 0.3, 3]);
         this.marker = new Mesh(this.markerGeo);
-        this.marker.scale.set(0.3, 0.3, 0.3);
-        this.marker.position.set(0, 1.2, 0);
-        this.marker.visible = false;
+        this.marker.name = 'bot marker';
+        this.marker.rotation.x = Math.PI;
+        this.marker.position.set(0, 1.4, 0);
         this.object.add(this.marker);
 
         this.moving = false;
-        this.pointerDown = null;
-
-        this.pointer3d = new Pointer3D(bbb, this.collider);
-
-        this.pointer3d.addEventListener('pointerdown', (e) => {
-            this.pointerDown = e;
-        });
-        
-        this.pointer3d.addEventListener('pointerup', (e) => {
-            if (this.pointerDown && e.event.timeStamp - this.pointerDown.event.timeStamp > 200) { return; }
-
-            this.dispatchEvent({
-                type: 'click',
-                pointerDown: this.pointerDown,
-                pointerUp: e
-            });
-
-            this.pointerDown = null;
-        });
     }
 
     move(dir) {
@@ -85,4 +69,4 @@ class Player extends EventDispatcher {
     }
 }
 
-export { Player }
+export { Bot }

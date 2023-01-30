@@ -3,7 +3,8 @@ import * as THREE from 'three';
 
 import { GUI } from './jsm/GUI.js';
 import { KeyboardControls } from './jsm/KeyboardControls.js';
-import { Player } from './jsm/Player.js';
+import { Bot } from './jsm/Bot.js';
+import { PointerControls } from './jsm/PointerControls.js';
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
@@ -29,6 +30,7 @@ class BBB {
         this.initOrbitControls();
         this.initUI();
         this.initKeyboardControls();
+        this.initPointerControls();
     }
 
     initLighting() {
@@ -84,6 +86,18 @@ class BBB {
         });
     }
 
+    initPointerControls() {
+        this.pointerControls = new PointerControls(this.renderer.domElement, this.camera);
+
+        this.pointerControls.addEventListener('click', (e) => {
+            this.deselectBots();
+            
+            if ('bot' in e.intersect.object && e.intersect.object.bot instanceof Bot) {
+                e.intersect.object.bot.marker.visible = true;
+            }
+        });
+    }
+
     animate() {
         requestAnimationFrame(() => { this.animate(); });
         this.effects.composer.render();
@@ -95,20 +109,19 @@ class BBB {
         this.renderer.setSize( window.innerWidth, window.innerHeight );
     }
 
-    addBot(position = new THREE.Vector3) {
-        const bot = new Player(this);
-        bot.addEventListener('click', (e) => {
-            console.log('bot click', e);
+    deselectBots() {
+        for (const bot of this.bots) {
+            bot.marker.visible = false;
+        }
+    }
 
-            for (const otherBot of this.bots) {
-                otherBot.marker.visible = false;
-            }
-            
-            bot.marker.visible = true;
-        });
+    addBot(position = new THREE.Vector3) {        
+        this.deselectBots();
 
+        const bot = new Bot();
         bot.object.position.copy(position);
         this.bots.push(bot);
+        this.pointerControls.targets.push(bot.collider);
         this.scene.add(bot.object);
     }
 }
