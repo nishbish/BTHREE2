@@ -1,35 +1,29 @@
 import {
-    EventDispatcher,
     MeshStandardMaterial,
     BoxGeometry,
-    Group,
     Mesh,
     Vector3,
     ConeGeometry,
 } from "three";
 
+import { Actor } from './Actor';
 import { AssetManager } from './AssetManager.js';
 
-class Bot extends EventDispatcher {
+class Bot extends Actor {
     constructor() {
         super();
 
-        this.object = new Group();
-        this.object.name = 'bot';
-
+        this.selected = false;
         this.geometry = AssetManager.createAsset('boxGeo', 'geometry', BoxGeometry, [1, 1, 1]);
         this.meshMaterial = AssetManager.createAsset('botSkin', 'material', MeshStandardMaterial, [{ color: 0x6148A1 }]);
       
         //mesh
         this.mesh = new Mesh(this.geometry, this.meshMaterial);
-        this.mesh.name = 'bot mesh';
         this.mesh.position.y += 0.5;
         this.object.add(this.mesh);
         
         //collider
-        this.collider = new Mesh(this.geometry);
-        this.collider.name = 'bot collider';
-        this.collider.bot = this;
+        this.collider.geometry = this.geometry;
         this.collider.visible = false;
         this.collider.position.y += 0.5;
         this.object.add(this.collider);
@@ -37,7 +31,6 @@ class Bot extends EventDispatcher {
         //active marker
         this.markerGeo = AssetManager.createAsset('markerGeo', 'geometry', ConeGeometry, [0.2, 0.3, 3]);
         this.marker = new Mesh(this.markerGeo);
-        this.marker.name = 'bot marker';
         this.marker.rotation.x = Math.PI;
         this.marker.position.set(0, 1.4, 0);
         this.object.add(this.marker);
@@ -45,8 +38,18 @@ class Bot extends EventDispatcher {
         this.moving = false;
     }
 
+    select() {
+        this.selected = true;
+        this.marker.visible = true;
+    }
+
+    deSelect() {
+        this.selected = false;
+        this.marker.visible = false;
+    }
+
     move(dir) {
-        if (this.moving) { return; }
+        if (!this.selected || this.moving) { return; }
 
         this.oldPos = this.object.position.clone();
         this.newPos = this.object.position.clone().add(dir);

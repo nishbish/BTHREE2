@@ -8,6 +8,7 @@ class PointerControls extends EventDispatcher {
     constructor(canvas, camera) {
         super();
 
+        this.clickTimer = 250;
         this.canvas = canvas;
         this.camera = camera;
         this.targets = [];
@@ -21,7 +22,7 @@ class PointerControls extends EventDispatcher {
 
     pointer(e, type) {
         const rect = this.canvas.getBoundingClientRect();
-
+        
         const clickPos = new Vector2(
             ((e.clientX - rect.x) / rect.width) * 2 - 1,
             -((e.clientY - rect.y) / rect.height) * 2 + 1
@@ -33,7 +34,7 @@ class PointerControls extends EventDispatcher {
 
         this[type] = {
             event: e,
-            intersect: intersect
+            intersect: intersect,
         }
 
         this.dispatchEvent({
@@ -43,7 +44,7 @@ class PointerControls extends EventDispatcher {
 
         if (type === 'pointerup' && this.pointerdown &&
         intersect && this.pointerdown.intersect.object === this.pointerup.intersect.object &&
-        this.pointerup.event.timeStamp - this.pointerdown.event.timeStamp < 200) {
+        this.pointerup.event.timeStamp - this.pointerdown.event.timeStamp < this.clickTimer) {
             this.dispatchEvent({
                 type: 'click',
                 pointerdown: this.pointerdown,

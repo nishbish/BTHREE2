@@ -9,28 +9,20 @@ import { PointerControls } from './jsm/PointerControls.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPixelatedPass } from 'three/addons/postprocessing/RenderPixelatedPass.js';
+import { Actor } from "./jsm/Actor";
 
 class BBB {
     constructor() {
         this.scene = new THREE.Scene();
-        this.init();
-       
-        this.gridSize = 50;
-        this.grid = new THREE.GridHelper(this.gridSize, this.gridSize);
-        this.grid.position.set(0.5, 0, 0.5);
-        this.scene.add(this.grid);
-
-        this.bots = [];
-    }
-
-    init() {
+        
         this.initLighting();
         this.initCamera();
         this.initRenderer();
         this.initOrbitControls();
         this.initUI();
         this.initKeyboardControls();
-        this.initPointerControls();
+        this.initActors();
+        this.initGrid();
     }
 
     initLighting() {
@@ -80,22 +72,24 @@ class BBB {
                 case 'ArrowLeft':  dir.x = -1; break;
             }
 
-            for (const bot of this.bots) {
-                bot.move(dir);
+            for (const actor of this.actors) {
+                if (actor instanceof Bot && actor.selected) {
+                    actor.move(dir);
+                }
             }
         });
     }
 
-    initPointerControls() {
-        this.pointerControls = new PointerControls(this.renderer.domElement, this.camera);
+    initGrid() {
+        this.gridSize = 50;
+        this.grid = new THREE.GridHelper(this.gridSize, this.gridSize);
+        this.grid.position.set(0.5, 0, 0.5);
+        this.scene.add(this.grid);
+    }
 
-        this.pointerControls.addEventListener('click', (e) => {
-            this.deselectBots();
-            
-            if ('bot' in e.intersect.object && e.intersect.object.bot instanceof Bot) {
-                e.intersect.object.bot.marker.visible = true;
-            }
-        });
+    initActors() {
+        Actor.initPointerControls(this.renderer.domElement, this.camera);
+        this.actors = [];
     }
 
     animate() {
@@ -109,21 +103,32 @@ class BBB {
         this.renderer.setSize( window.innerWidth, window.innerHeight );
     }
 
-    deselectBots() {
-        for (const bot of this.bots) {
-            bot.marker.visible = false;
+    selectBot(bot) {
+        for (const actor of this.actors) {
+            if (actor instanceof Bot) {
+                actor.deSelect();
+            }
         }
+        
+        bot.select();
     }
 
-    addBot(position = new THREE.Vector3) {        
-        this.deselectBots();
-
+    addBot(position = new THREE.Vector3) {
         const bot = new Bot();
+        this.actors.push(bot);
+        bot.name = 'bot_' + this.actors.length;
+        
+        this.selectBot(bot);
+
+        bot.addEventListener('click', (e) => {
+            console.log('bot click', e);
+            this.selectBot(e.actor);
+        });
+        
         bot.object.position.copy(position);
-        this.bots.push(bot);
-        this.pointerControls.targets.push(bot.collider);
         this.scene.add(bot.object);
     }
 }
 
 window.bbb = new BBB();
+window.Actor = Actor;
