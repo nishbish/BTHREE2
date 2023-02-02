@@ -74,7 +74,11 @@ class BBB {
 
             for (const actor of this.actors) {
                 if (actor instanceof Bot && actor.selected) {
-                    actor.move(dir);
+                    const newPos = actor.object.position.clone().add(dir);
+                    const actorInPos = this.getActorInPos(newPos);
+                    if (actorInPos) { break; }
+
+                    actor.move(newPos);
                 }
             }
         });
@@ -103,6 +107,16 @@ class BBB {
         this.renderer.setSize( window.innerWidth, window.innerHeight );
     }
 
+    getActorInPos(pos) {
+        for (const actor of this.actors) {
+            if (actor.object.position.equals(pos)) {
+                return actor;
+            }
+        }
+
+        return null;
+    }
+
     selectBot(bot) {
         for (const actor of this.actors) {
             if (actor instanceof Bot) {
@@ -121,7 +135,6 @@ class BBB {
         this.selectBot(bot);
 
         bot.addEventListener('click', (e) => {
-            console.log('bot click', e);
             this.selectBot(e.actor);
         });
         

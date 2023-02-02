@@ -48,17 +48,16 @@ class Bot extends Actor {
         this.marker.visible = false;
     }
 
-    move(dir) {
+    move(pos) {
         if (!this.selected || this.moving) { return; }
 
         this.oldPos = this.object.position.clone();
-        this.newPos = this.object.position.clone().add(dir);
         this.moving = true;
         
         const animate = (alpha) => {
             alpha = alpha > 1 ? 1 : alpha;
             
-            const lerpPos = new Vector3().lerpVectors(this.oldPos, this.newPos, alpha);
+            const lerpPos = new Vector3().lerpVectors(this.oldPos, pos, alpha);
             this.object.position.copy(lerpPos);
             
             if (alpha < 1) {
