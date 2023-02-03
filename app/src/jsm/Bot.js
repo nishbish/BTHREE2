@@ -53,6 +53,8 @@ class Bot extends Actor {
 
         this.oldPos = this.object.position.clone();
         this.moving = true;
+        this.recording = false;
+        this.playing = false;
         
         const animate = (alpha) => {
             alpha = alpha > 1 ? 1 : alpha;

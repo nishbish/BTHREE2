@@ -14,7 +14,8 @@ import { Actor } from "./jsm/Actor";
 class BBB {
     constructor() {
         this.scene = new THREE.Scene();
-        
+        this.selectedBot = null;
+
         this.initLighting();
         this.initCamera();
         this.initRenderer();
@@ -57,7 +58,9 @@ class BBB {
     }
 
     initUI() {
-        GUI.get('#addBotButton').addEventListener('click', () => { this.addBot(); });
+        GUI.get('#addBotButton').addEventListener('click', (e) => { this.addBot(e.target); });
+        
+        GUI.get('#recordBotButton').addEventListener('click', (e) => { this.recordBot(e.target); });
     }
 
     initKeyboardControls() {
@@ -125,6 +128,7 @@ class BBB {
         }
         
         bot.select();
+        this.selectedBot = bot;
     }
 
     addBot(position = new THREE.Vector3) {
@@ -140,6 +144,23 @@ class BBB {
         
         bot.object.position.copy(position);
         this.scene.add(bot.object);
+    }
+
+    recordBot(button) {
+        if (!this.selectedBot) {
+            button.disabled = true;
+            return;
+        }
+        
+        button.disabled = true;
+        
+        this.selectedBot.recording = !this.selectedBot.recording;
+
+        if (this.selectedBot.recording) {
+            button.classlist.add('recording');
+        } else {
+            button.classlist.remove('recording');
+        }
     }
 }
 

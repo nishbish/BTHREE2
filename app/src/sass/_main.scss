@@ -25,6 +25,7 @@ button {
     border-bottom-color: $shadow;
     border-right-color: $shadow;
     outline: 2px solid #2e2e2e;
+    text-shadow: -1px -1px rgba(0,0,0,0.5), 1px 1px rgba(255,255,255,0.5);
 
     &:active {
         border-top-color: $shadow;
@@ -32,20 +33,26 @@ button {
         border-bottom-color: $highlight;
         border-right-color: $highlight;
     }
+
+    &:disabled {
+        color:#cbcbcb;
+    }
 }
 
-#addBotButton {
+#buttonContainer {
     position: absolute;
     top: 10px;
     left: 10px;
+    display: flex;
+    gap: 0 10px;
 }
 
-#indicator {
-    pointer-events: none;
-    background-color: red;
-    position:absolute;
-    z-index:1;
-    width:2px;
-    height:2px;
-    transform: translate(-50%, -50%);
+#recordBotButton {
+    font-size: 34px;
+    line-height: 28px;
+
+    .recording {
+        background-color: #9e3b3b;
+        color: #ffffff;
+    }
 }
