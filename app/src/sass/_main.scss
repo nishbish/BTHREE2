@@ -51,8 +51,23 @@ button {
     font-size: 34px;
     line-height: 28px;
 
-    .recording {
+    &.recording {
         background-color: #9e3b3b;
         color: #ffffff;
+
+        $highlight: #c65d5d;
+        $shadow: #671e1e;
+
+        border-top-color: $highlight;
+        border-left-color: $highlight;
+        border-bottom-color: $shadow;
+        border-right-color: $shadow;
+
+        &:active {
+            border-top-color: $shadow;
+            border-left-color: $shadow;
+            border-bottom-color: $highlight;
+            border-right-color: $highlight;
+        }
     }
 }

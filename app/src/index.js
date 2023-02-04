@@ -58,9 +58,9 @@ class BBB {
     }
 
     initUI() {
-        GUI.get('#addBotButton').addEventListener('click', (e) => { this.addBot(e.target); });
+        GUI.get('#addBotButton').addEventListener('click', (e) => { this.addBot(); });
         
-        GUI.get('#recordBotButton').addEventListener('click', (e) => { this.recordBot(e.target); });
+        GUI.get('#recordBotButton').addEventListener('click', (e) => { console.log(e); this.recordBot(e.target); });
     }
 
     initKeyboardControls() {
@@ -142,27 +142,18 @@ class BBB {
             this.selectBot(e.actor);
         });
         
+        GUI.get('#recordBotButton').disabled = false;
+
         bot.object.position.copy(position);
         this.scene.add(bot.object);
     }
 
-    recordBot(button) {
-        if (!this.selectedBot) {
-            button.disabled = true;
-            return;
-        }
-        
-        button.disabled = true;
-        
-        this.selectedBot.recording = !this.selectedBot.recording;
+    recordBot() {
+        if (!this.selectedBot) { return; }
 
-        if (this.selectedBot.recording) {
-            button.classlist.add('recording');
-        } else {
-            button.classlist.remove('recording');
-        }
+        this.selectedBot.recording = !this.selectedBot.recording;
+        GUI.get('#recordBotButton').classList.toggle('recording');
     }
 }
 
 window.bbb = new BBB();
-window.Actor = Actor;
