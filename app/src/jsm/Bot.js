@@ -36,6 +36,9 @@ class Bot extends Actor {
         this.object.add(this.marker);
 
         this.moving = false;
+        this.recording = false;
+        this.playing = false;
+        this.commands = [];
     }
 
     select() {
@@ -50,11 +53,10 @@ class Bot extends Actor {
 
     move(pos) {
         if (!this.selected || this.moving) { return; }
-
         this.oldPos = this.object.position.clone();
+        
         this.moving = true;
-        this.recording = false;
-        this.playing = false;
+        this.recordCommand('move', pos.clone().sub(this.oldPos));
         
         const animate = (alpha) => {
             alpha = alpha > 1 ? 1 : alpha;
@@ -70,6 +72,26 @@ class Bot extends Actor {
         }
 
         animate(0);
+    }
+
+    recordCommand(type, data) {
+        if (!this.recording) { return; }
+
+        this.commands.push({
+            type: type,
+            data: data
+        });
+
+        console.log('this.commands', this.commands);
+    }
+
+    playCommands() {
+        if (this.recording) { return; }
+        if (this.playing) { return; }
+
+        for (const command of this.commands) {
+            
+        }
     }
 }
 

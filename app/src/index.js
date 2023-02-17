@@ -152,7 +152,15 @@ class BBB {
         if (!this.selectedBot) { return; }
 
         this.selectedBot.recording = !this.selectedBot.recording;
+        this.selectBot.commands = [];
+
         GUI.get('#recordBotButton').classList.toggle('recording');
+    }
+
+    playBot() {
+        if (!this.selectedBot) { return; }
+
+        this.selectedBot.playCommands();
     }
 }
 
