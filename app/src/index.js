@@ -61,6 +61,7 @@ class BBB {
         GUI.get('#addBotButton').addEventListener('click', (e) => { this.addBot(); });
         
         GUI.get('#recordBotButton').addEventListener('click', (e) => { console.log(e); this.recordBot(e.target); });
+        GUI.get('#playBotButton').addEventListener('click', (e) => { console.log(e); this.playBot(e.target); });
     }
 
     initKeyboardControls() {

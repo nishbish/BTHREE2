@@ -51,7 +51,7 @@ class Bot extends Actor {
         this.marker.visible = false;
     }
 
-    move(pos) {
+    move(pos, callback = () => {}) {
         if (!this.selected || this.moving) { return; }
         this.oldPos = this.object.position.clone();
         
@@ -68,6 +68,7 @@ class Bot extends Actor {
                 requestAnimationFrame(() => { animate(alpha + 0.1); });
             } else {
                 this.moving = false;
+                callback();
             }
         }
 
@@ -81,17 +82,30 @@ class Bot extends Actor {
             type: type,
             data: data
         });
-
-        console.log('this.commands', this.commands);
     }
 
     playCommands() {
         if (this.recording) { return; }
         if (this.playing) { return; }
 
-        for (const command of this.commands) {
-            
+        let commandIndex = 0;
+
+        const runCommand = (index) => {
+            if (index >= this.commands.length) { index = 0; }
+            const command = this.commands[index];
+            console.log('command', command);
+
+            switch (command.type) {
+                case 'move':
+                    this.move(command.data, () => {
+                        runCommand(index + 1);
+                    });
+
+                    break;
+            }
         }
+
+        runCommand(commandIndex);
     }
 }
 
