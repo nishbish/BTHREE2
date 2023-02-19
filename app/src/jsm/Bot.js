@@ -87,17 +87,20 @@ class Bot extends Actor {
     playCommands() {
         if (this.recording) { return; }
         if (this.playing) { return; }
-
+        
+        this.playing = true;
         let commandIndex = 0;
 
         const runCommand = (index) => {
+            if (!this.playing) { return; }
+            if (this.commands.length === 0) { return; }
             if (index >= this.commands.length) { index = 0; }
             const command = this.commands[index];
-            console.log('command', command);
 
             switch (command.type) {
                 case 'move':
-                    this.move(command.data, () => {
+                    const newPos = this.object.position.clone().add(command.data);
+                    this.move(newPos, () => {
                         runCommand(index + 1);
                     });
 
@@ -106,6 +109,10 @@ class Bot extends Actor {
         }
 
         runCommand(commandIndex);
+    }
+
+    pauseCommands() {
+        this.playing = false;
     }
 }
 

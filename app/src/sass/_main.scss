@@ -45,6 +45,12 @@ button {
     left: 10px;
     display: flex;
     gap: 0 10px;
+
+    button img {
+        width: 28px;
+        height: auto;
+        vertical-align: middle;
+    }
 }
 
 #recordBotButton {

@@ -60,8 +60,8 @@ class BBB {
     initUI() {
         GUI.get('#addBotButton').addEventListener('click', (e) => { this.addBot(); });
         
-        GUI.get('#recordBotButton').addEventListener('click', (e) => { console.log(e); this.recordBot(e.target); });
-        GUI.get('#playBotButton').addEventListener('click', (e) => { console.log(e); this.playBot(e.target); });
+        GUI.get('#recordBotButton').addEventListener('click', (e) => { this.recordBot(e.target); });
+        GUI.get('#playBotButton').addEventListener('click', (e) => { this.togglePlayBot(e.target); });
     }
 
     initKeyboardControls() {
@@ -158,10 +158,16 @@ class BBB {
         GUI.get('#recordBotButton').classList.toggle('recording');
     }
 
-    playBot() {
+    togglePlayBot(e) {
         if (!this.selectedBot) { return; }
 
-        this.selectedBot.playCommands();
+        if (this.selectedBot.playing) {
+            e.querySelector('img').src = '../app/src/icons/play.svg';
+            this.selectedBot.pauseCommands();
+        } else {
+            e.querySelector('img').src =  '../app/src/icons/pause.svg';
+            this.selectedBot.playCommands();
+        }
     }
 }
 
