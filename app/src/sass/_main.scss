@@ -47,33 +47,35 @@ button {
     gap: 0 10px;
 
     button img {
-        width: 28px;
-        height: auto;
-        vertical-align: middle;
+        width: 18px;
+        display: flex;
+        align-self: center;
+        justify-self: center;
     }
-}
 
-#recordBotButton {
-    font-size: 34px;
-    line-height: 28px;
+    #playBotButton img {
+        width: 30px;
+    }
+    
+    #recordBotButton {
+        &.recording {
+            background-color: #9e3b3b;
+            color: #ffffff;
+            
+            $highlight: #c65d5d;
+            $shadow: #671e1e;
 
-    &.recording {
-        background-color: #9e3b3b;
-        color: #ffffff;
-
-        $highlight: #c65d5d;
-        $shadow: #671e1e;
-
-        border-top-color: $highlight;
-        border-left-color: $highlight;
-        border-bottom-color: $shadow;
-        border-right-color: $shadow;
-
-        &:active {
-            border-top-color: $shadow;
-            border-left-color: $shadow;
-            border-bottom-color: $highlight;
-            border-right-color: $highlight;
+            border-top-color: $highlight;
+            border-left-color: $highlight;
+            border-bottom-color: $shadow;
+            border-right-color: $shadow;
+            
+            &:active {
+                border-top-color: $shadow;
+                border-left-color: $shadow;
+                border-bottom-color: $highlight;
+                border-right-color: $highlight;
+            }
         }
     }
 }

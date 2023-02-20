@@ -92,9 +92,10 @@ class Bot extends Actor {
         let commandIndex = 0;
 
         const runCommand = (index) => {
-            if (!this.playing) { return; }
             if (this.commands.length === 0) { return; }
             if (index >= this.commands.length) { index = 0; }
+            if (!this.playing && index === 0) { return; }
+            
             const command = this.commands[index];
 
             switch (command.type) {
